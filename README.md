@@ -56,6 +56,7 @@ Code            | Average               | Total                 | Count         
 # TODO
 - [ ] Add unit tests (DDT :()
 - [ ] Refactor app initialization (Client and cmd processor creation in main.go) so Basiq session is not requested before command is validated
+- [ ] Fix issue with creating connection usin current version of github.com/antonio-salieri/basiq-sdk-golang
 - [ ] Add `user create` command validation that checks if either `email` or `mobile` is passed
 - [ ] Expose commands for manipulating user connections
 - [ ] Add REST API for access
