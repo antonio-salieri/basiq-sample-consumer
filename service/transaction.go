@@ -40,7 +40,8 @@ func (ts *TransactionService) AggregateTransactionPerDebitCategory(userID string
 	var aggregatedTransactions = make(AggregatedTransactionsPerType)
 
 	for _, t := range transactions {
-		if t.Direction == entity.Debit {
+		// Include only debit transactions with some category
+		if t.Direction == entity.Debit && len(t.Type.Code) > 0 {
 			if existing, ok := aggregatedTransactions[t.Type.Code]; ok {
 				existing.totalSum += t.Amount
 				existing.transactionCount++
@@ -113,7 +114,8 @@ func (a AggregatedTransactionsPerType) GetAverageAmounts(transactionTypeCode *st
 
 // Print prints contents of AggregatedTransactionsPerType
 func (a AggregatedTransactionsPerType) Print() {
-	fmt.Printf("Code\t\t| Average\t\t| Total\t\t\t| Count\t\t\t |Title \n")
+	fmt.Printf("\nCode\t\t| Average\t\t| Total\t\t\t| Count\t\t\t |Title \n")
+	fmt.Println("-------------------------------------------------------------------------------------------------------------------------------")
 	for _, v := range a {
 		fmt.Printf("%s\t\t| %0.2f\t\t| %0.2f\t\t| %d\t\t\t |%s\n",
 			v.transactionType.Code, v.average, v.totalSum, v.transactionCount, v.transactionType.Title)
