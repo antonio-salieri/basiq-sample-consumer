@@ -58,6 +58,6 @@ Code            | Average               | Total                 | Count         
 - [ ] Refactor app initialization (Client and cmd processor creation in main.go) so Basiq session is not requested before command is validated
 - [ ] Fix issue with creating connection usin current version of github.com/antonio-salieri/basiq-sdk-golang
 - [ ] Add `user create` command validation that checks if either `email` or `mobile` is passed
+- [ ] Improve formula for calculating average transaction, so not all transactions are stored in memory during calculation
 - [ ] Expose commands for manipulating user connections
-- [ ] Add REST API for access
-- [ ] Persist already fetched data and make new request only when forced
+- [ ] Persist already fetched data and make new request only when forced in command
