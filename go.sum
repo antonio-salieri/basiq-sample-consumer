@@ -1,5 +1,5 @@
-github.com/basiqio/basiq-sdk-golang v0.0.0-20180711090411-798350e63c47 h1:3JIvlohe9WywR2ksl9ShvHZJLWr3YMLIw25/IcTpDh8=
-github.com/basiqio/basiq-sdk-golang v0.0.0-20180711090411-798350e63c47/go.mod h1:Lqjedrxs/L8/viIUyUqGhKXiFt9ygYU+5EB40CuOxY4=
+github.com/basiqio/basiq-sdk-golang v0.0.0-20190204115548-89d1666363e8 h1:Cy7EBp8ZHLFKOb6z7OOlsYcTavBEdOGg09OHba9jkiI=
+github.com/basiqio/basiq-sdk-golang v0.0.0-20190204115548-89d1666363e8/go.mod h1:Lqjedrxs/L8/viIUyUqGhKXiFt9ygYU+5EB40CuOxY4=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/spf13/cobra v0.0.3 h1:ZlrZ4XsMRm04Fr5pSFxBgfND2EBVa1nLpiy1stUsX/8=
