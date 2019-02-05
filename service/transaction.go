@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/antonio-salieri/basiq-sample-consumer/client"
 	"github.com/antonio-salieri/basiq-sample-consumer/entity"
@@ -9,7 +10,7 @@ import (
 
 // TransactionService transaction service structure
 type TransactionService struct {
-	apiClient client.Client
+	apiClient client.TransactionsAPI
 }
 
 // TransactionAmountPerType amount and transaction count per transaction type
@@ -24,7 +25,7 @@ type TransactionAmountPerType struct {
 type AggregatedTransactionsPerType map[string]TransactionAmountPerType
 
 // NewTransactionService creates new transaction service
-func NewTransactionService(apiClient client.Client) *TransactionService {
+func NewTransactionService(apiClient client.TransactionsAPI) *TransactionService {
 	return &TransactionService{
 		apiClient: apiClient,
 	}
@@ -32,7 +33,7 @@ func NewTransactionService(apiClient client.Client) *TransactionService {
 
 // AggregateTransactionPerDebitCategory calculate average transaction amount per transaction type
 func (ts *TransactionService) AggregateTransactionPerDebitCategory(userID string, institutionData entity.ConnectionData) (AggregatedTransactionsPerType, error) {
-	transactions, err := ts.fetchUserTransactions(userID, institutionData)
+	transactions, err := ts.apiClient.GetUserTransactionsInInstitution(userID, institutionData)
 	if err != nil {
 		return nil, err
 	}
@@ -58,33 +59,6 @@ func (ts *TransactionService) AggregateTransactionPerDebitCategory(userID string
 	}
 
 	return aggregatedTransactions, nil
-}
-
-func (ts *TransactionService) fetchUserTransactions(userID string, institutionData entity.ConnectionData) (entity.TransactionCollection, error) {
-	var connection *entity.Connection
-
-	// Try to find existing connection
-	connections, err := ts.apiClient.GetConnectionsToInstitution(userID, institutionData.InstitutionID)
-	if err != nil {
-		return nil, err
-	}
-	if len(connections) > 0 {
-		connection, err = connections.GetFirstActiveConnection()
-	} else {
-		// Create connection if it does not exists
-		connection, err = ts.apiClient.CreateConnection(userID, institutionData)
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	// Fetch all user transactions in given insitution
-	transactions, err := ts.apiClient.GetTransactions(userID, connection.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	return transactions, nil
 }
 
 // GetAverageAmounts prints average transaction amount per category
@@ -114,10 +88,24 @@ func (a AggregatedTransactionsPerType) GetAverageAmounts(transactionTypeCode *st
 
 // Print prints contents of AggregatedTransactionsPerType
 func (a AggregatedTransactionsPerType) Print() {
-	fmt.Printf("\nCode\t\t| Average\t\t| Total\t\t\t| Count\t\t\t |Title \n")
+	fmt.Printf("\nCode\t\t| Average\t\t| Total\t\t\t| Count\t\t\t | Title\n")
 	fmt.Println("-------------------------------------------------------------------------------------------------------------------------------")
-	for _, v := range a {
-		fmt.Printf("%s\t\t| %0.2f\t\t| %0.2f\t\t| %d\t\t\t |%s\n",
-			v.transactionType.Code, v.average, v.totalSum, v.transactionCount, v.transactionType.Title)
+
+	// Sort output by transaction types
+	keys := make([]string, 0)
+	for k := range a {
+		keys = append(keys, k)
 	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		value := a[k]
+		fmt.Printf("%s\t\t| %0.2f\t\t| %0.2f\t\t| %d\t\t\t |%s\n",
+			value.transactionType.Code, value.GetAverageAmount(), value.totalSum, value.transactionCount, value.transactionType.Title)
+	}
+}
+
+// GetAverageAmount returns aggregated transaction average amount
+func (a TransactionAmountPerType) GetAverageAmount() float64 {
+	return a.average
 }

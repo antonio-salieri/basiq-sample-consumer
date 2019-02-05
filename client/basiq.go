@@ -142,3 +142,31 @@ func (c *BasiqClient) GetTransactions(userID string, connectionID string) (entit
 
 	return collection, nil
 }
+
+// GetUserTransactionsInInstitution retrieves all user transactions for
+func (c *BasiqClient) GetUserTransactionsInInstitution(userID string, institutionData entity.ConnectionData) (entity.TransactionCollection, error) {
+	var connection *entity.Connection
+
+	// Try to find existing connection
+	connections, err := c.GetConnectionsToInstitution(userID, institutionData.InstitutionID)
+	if err != nil {
+		return nil, err
+	}
+	if len(connections) > 0 {
+		connection, err = connections.GetFirstActiveConnection()
+	} else {
+		// Create connection if it does not exists
+		connection, err = c.CreateConnection(userID, institutionData)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	// Fetch all user transactions in given insitution
+	transactions, err := c.GetTransactions(userID, connection.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}
